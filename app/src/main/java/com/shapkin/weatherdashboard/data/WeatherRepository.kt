@@ -1,6 +1,8 @@
 package com.shapkin.weatherdashboard.data
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 class WeatherRepository{
@@ -22,5 +24,18 @@ class WeatherRepository{
     }
     fun toggleErrorSimulation(){
         shouldFail!=shouldFail
+    }
+    suspend fun calculateWeatherIndex(
+        temp:Int,
+        humiduty: Int,
+        wind: Int
+    ): Int{
+        return withContext(Dispatchers.Default){
+            var result=0
+            for (i in 1..1000000){
+                result+=(temp+humiduty+wind)/3
+            }
+            result/1000000
+        }
     }
 }
