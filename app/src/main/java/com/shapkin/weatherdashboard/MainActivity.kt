@@ -1,6 +1,7 @@
 package com.shapkin.weatherdashboard
 
 import android.os.Bundle
+import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -89,6 +90,14 @@ fun WeatherDashboardScreen(
             enabled = !weatherState.isLoading
         ) {
             Text(text = if (weatherState.isLoading) "Loading..." else "🔁 Refresh Weather")
+        }
+        if (weatherState.loadingProgress.isNotEmpty()){
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = weatherState.loadingProgress,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
         }
         if (weatherState.error != null) {
             Spacer(modifier = Modifier.height(16.dp))
