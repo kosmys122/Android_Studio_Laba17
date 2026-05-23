@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.shapkin.weatherdashboard.ui.theme.WeatherDashboardTheme
@@ -91,6 +92,16 @@ fun WeatherDashboardScreen(
                 title = "Weather Index",
                 value = "${weatherState.weatherIndex}",
                 isLoading = false
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "🔁 Auto-refresh every 10s",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.tertiary
             )
         }
         Spacer(modifier = Modifier.height(32.dp))
