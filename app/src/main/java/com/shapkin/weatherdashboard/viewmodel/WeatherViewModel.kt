@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 class WeatherViewModel: ViewModel(){
     private val repository= WeatherRepository()
@@ -24,32 +25,24 @@ class WeatherViewModel: ViewModel(){
                 loadingProgress = "Запуск загрузки..."
             )
             try {
-                _weatherState.value=_weatherState.value.copy(
-                    loadingProgress = "Загружаем температуру, влажность, скорость ветра..."
-                )
-                val temperatyreDeferred=async { repository.fetchTemperature() }
-                val humidityDeferred=async { repository.fetchHumidity() }
-                val windSpeedDeferred=async { repository.fetchWindSpeed() }
-                val temperature=temperatyreDeferred.await()
-                val humidity=humidityDeferred.await()
-                val windSpeed=windSpeedDeferred.await()
-                _weatherState.value= WeatherData(
-                    temperatyre = temperature,
-                    humidity = humidity,
-                    windSpeed = windSpeed,
-                    isLoading = false,
-                    error = null,
-                    loadingProgress = "Загрузка завершена!"
-                )
-//                val temperature=repository.fetchTemperature()
-//                _weatherState.value=_weatherState.value.copy(temperatyre = temperature)
-//                val humidity=repository.fetchHumidity()
-//                _weatherState.value=weatherState.value.copy(humidity = humidity)
-//                val windSpeed=repository.fetchWindSpeed()
-//                _weatherState.value=_weatherState.value.copy(windSpeed = windSpeed)
-//                _weatherState.value=_weatherState.value.copy(isLoading = false)
-            } catch (e: Exception){
-                _weatherState.value=_weatherState.value.copy(
+                coroutineScope {
+                    val tempDeferred = async { repository.fetchTemperature() }
+                    val humDeferred = async { repository.fetchHumidity() }
+                    val windDeferred = async { repository.fetchWindSpeed() }
+                    val temperature = tempDeferred.await()
+                    val humidity = humDeferred.await()
+                    val windSpeed = windDeferred.await()
+                    _weatherState.value = WeatherData(
+                        temperatyre = temperature,
+                        humidity = humidity,
+                        windSpeed = windSpeed,
+                        isLoading = false,
+                        error = null,
+                        loadingProgress = "Загрузка завершена!"
+                    )
+                }
+            } catch (e: Exception) {
+                _weatherState.value = _weatherState.value.copy(
                     isLoading = false,
                     error = "Ошибка загрузки: ${e.message}",
                     loadingProgress = ""
@@ -57,5 +50,7 @@ class WeatherViewModel: ViewModel(){
             }
         }
     }
-
+    fun toggleErrorSimulation(){
+        repository.toggleErrorSimulation()
+    }
 }
